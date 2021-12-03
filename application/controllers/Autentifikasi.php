@@ -69,7 +69,16 @@ private function _login()
         }
     }
 
-public function blok()
+    public function logout()
+    {
+        $this->session->unset_userdata('email');
+        $this->session->unset_userdata('role_id');
+
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-message" role="alert">Anda telah logout!!</div>');
+        redirect('autentifikasi');
+    }
+
+    public function blok()
     {
         $this->load->view('autentifikasi/blok');
     }
@@ -79,7 +88,7 @@ public function blok()
         $this->load->view('autentifikasi/gagal');
     }
 
-public function registrasi()
+    public function registrasi()
     {
         if ($this->session->userdata('email')) {
             redirect('user');
@@ -133,7 +142,7 @@ public function registrasi()
             
             $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-message" role="alert">Selamat!! akun member anda sudah dibuat. Silahkan Aktivasi Akun anda</div>');
             redirect('autentifikasi');
-            }
         }
+    }
            
 } 
