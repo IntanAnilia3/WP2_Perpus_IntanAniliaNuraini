@@ -80,8 +80,7 @@ $where);
                         <div class="h1 mb-0 font-weight-bold text-white">
                             <?php
                             $where = ['dibooking !=0'];
-                            $totaldibooking = $this->ModelBuku-
->total('dibooking', $where);
+                            $totaldibooking = $this->ModelBuku->total('dibooking', $where);
                             echo $totaldibooking;
                             ?>
                         </div>
