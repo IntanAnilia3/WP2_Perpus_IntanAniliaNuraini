@@ -1,32 +1,30 @@
-<?php
-defined('BASEPATH') or exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class User extends CI_Controller
 {
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
         cek_login();
     }
-
-    public function index()
+    function index()
     {
         $data['judul'] = 'Profil Saya';
         $data['user'] = $this->ModelUser->cekData(['email' => $this->session->userdata('email')])->row_array();
-
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('templates/topbar', $data);
         $this->load->view('user/index', $data);
         $this->load->view('templates/footer');
-}
+    }
 
-    public function anggota()
+    function anggota()
     {
-        $data['judul'] = 'Data Anggota';
-        $data['user'] = $this->ModelUser->cekData(['email' => $this->session->userdata('email')])->row_array();
-        $this->db->where('role_id', 1);
-        $data['anggota'] = $this->db->get('user')->result_array();
+        $data   = [
+            'judul'     => "Data Anggota",
+            'user'      => $this->ModelUser->cekData(['email' => $this->session->userdata('email')])->row_array(),
+            'anggota'   => $this->db->get_where('user', ['role_id' => 2])->result_array()
+        ];
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('templates/topbar', $data);
@@ -34,11 +32,10 @@ class User extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function ubahProfil()
+    function ubahProfil()
     {
         $data['judul'] = 'Ubah Profil';
         $data['user'] = $this->ModelUser->cekData(['email' => $this->session->userdata('email')])->row_array();
-
         $this->form_validation->set_rules('nama', 'Nama Lengkap', 'required|trim', [
             'required' => 'Nama tidak Boleh Kosong'
         ]);
@@ -55,17 +52,14 @@ class User extends CI_Controller
 
             //jika ada gambar yang akan diupload
             $upload_image = $_FILES['image']['name'];
-
             if ($upload_image) {
                 $config['upload_path'] = './assets/img/profile/';
-                $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size'] = '3000';
+                $config['allowed_types'] = 'gif|jpg|png|jpeg';
+                $config['max_size']     = '3000';
                 $config['max_width'] = '1024';
                 $config['max_height'] = '1000';
                 $config['file_name'] = 'pro' . time();
-
                 $this->load->library('upload', $config);
-
                 if ($this->upload->do_upload('image')) {
                     $gambar_lama = $data['user']['image'];
                     if ($gambar_lama != 'default.jpg') {
@@ -73,9 +67,9 @@ class User extends CI_Controller
                     }
                     $gambar_baru = $this->upload->data('file_name');
                     $this->db->set('image', $gambar_baru);
-                } else { }
+                } else {
+                }
             }
-
             $this->db->set('nama', $nama);
             $this->db->where('email', $email);
             $this->db->update('user');
